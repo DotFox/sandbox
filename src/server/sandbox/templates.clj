@@ -12,12 +12,17 @@
 (def styles (html-resource (str "templates/head/" env-str "/styles.html")))
 (def scripts (html-resource (str "templates/head/" env-str "/scripts.html")))
 
+(defsnippet meta-tags "templates/head/meta.html"
+  [:meta]
+  [])
+
+;; (defsnippet styles (src "templates/head/" env-str "/styles.html"))
+
 (deftemplate main-template "templates/application.html"
   []
   :lockstep
-  {[:head :title] (after (select meta-tags [:meta]))}
+  {[:head :title] (after (meta-tags))}
   [:head [:meta last-of-type]] (after (select styles [:link]))
   :lockstep
   {[:body [:div last-of-type]] (after (select scripts [:script]))}
-  [:body [:div last-of-type]] )
-
+  [:body [:div last-of-type]])

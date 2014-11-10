@@ -4,23 +4,21 @@
         [server.sandbox.middleware :only [wrap-request-logging
                                           wrap-failsafe]]
         [org.httpkit.server :only [run-server]]
-        (ring.middleware [keyword-params :only [wrap-keyword-params]]
-                         [params :only [wrap-params]]
-                         [session :only [wrap-session]]
-                         [reload :only [wrap-reload]])
-        [compojure.handler :only [site]]))
+        [ring.middleware.gzip]
+        (ring.middleware [reload :only [wrap-reload]]
+                         [defaults :refer :all])))
 
 (def in-dev?
   (let [environment (get-in (application-config) [:nomad/environment])]
     (= environment "dev")))
 
+;; (def site
+;;   (wrap-defaults handler site-defaults))
+
 (defn -main [& args]
   (let [base-handler (-> #'base-routes
-                        wrap-session
-                        wrap-keyword-params
-                        wrap-params
                         wrap-failsafe
-                        site)
+                        wrap-gzip)
         handler (if in-dev?
                   (-> base-handler
                      wrap-request-logging
@@ -28,7 +26,7 @@
                   base-handler)
         server-opts (get-in (application-config) [:server])]
     (println (str "Start server with " server-opts))
-    (run-server handler server-opts)))
+    (run-server (wrap-defaults handler site-defaults) server-opts)))
 
 
 

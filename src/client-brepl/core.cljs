@@ -1,4 +1,10 @@
 (ns client-brepl.core
-  (:require [clojure.browser.repl :as repl]))
+  (:require [weasel.repl :as ws-repl]))
 
-(repl/connect "http://localhost:9000/repl")
+(if-not (ws-repl/alive?)
+  (ws-repl/connect "ws://localhost:9001"
+                   :verbose true
+                   :print #{:repl :console}
+                   :on-error #(print "Error! " %)
+                   :on-open #(print "Web REPL connected!")
+                   :on-close #(print "WebREPL closed!")))

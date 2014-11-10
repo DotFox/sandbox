@@ -1,7 +1,7 @@
 (ns client.sandbox.core
-  (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [client.sandbox.misc :as misc]))
+  (:require [client.sandbox.misc :as misc]
+            [om.core :as om :include-macros true]
+            [om.dom :as dom :include-macros true]))
 
 (enable-console-print!)
 
@@ -11,8 +11,6 @@
                         :href "/"}
                        {:title "Link 2"
                         :href "/app"}]}}))
-
-(println app-state)
 
 (defn nav-header [data owner]
   (reify

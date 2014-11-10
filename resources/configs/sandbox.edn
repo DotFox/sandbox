@@ -2,6 +2,7 @@
  {:databases
   {:dev {}
    :prod {}}}
+ 
  :nomad/environments
  {"dev"
   {:server {:port 3000
@@ -9,8 +10,9 @@
             :worker-name-prefix "dev-sandbox"}}
   "prod"
   {:server {:port 3001
-            :thread 4
+            :thread 16
             :worker-name-prefix "prod-sandbox"}}}
+ 
  :nomad/hosts
  {"Kirills-MacBook-Air.local"
   {:database #nomad/snippet [:databases :dev]}

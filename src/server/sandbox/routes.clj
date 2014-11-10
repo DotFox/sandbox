@@ -12,5 +12,12 @@
 
 (defroutes base-routes
   (GET "/" [] (main-template))
+  (GET "/test" []
+       {:status 200
+        :headers {"Content-Type" "text/html; charset=utf-8"}})
+  (GET "/api" [x y :as r]
+       {:status 200
+        :headers {"Content-Type" "text/html; charset=utf-8"}
+        :body (str "OK: " r)})
   (route/resources "/" {:root root})
   (route/not-found "Page not found"))
