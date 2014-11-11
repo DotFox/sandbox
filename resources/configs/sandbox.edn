@@ -1,7 +1,9 @@
 {:nomad/snippets
  {:databases
-  {:dev {}
-   :prod {}}}
+  {:dev {:config "resources/datomic/dev-transactor-template.properties"
+         :db-uri "datomic:dev://localhost:4334/my-db"}
+   :prod {:config "resources/datomic/cassandra-transactor-template.properties"
+          :db-uri "datomic:cass://localhost:4334/my-db"}}}
  
  :nomad/environments
  {"dev"

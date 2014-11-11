@@ -12,9 +12,6 @@
   (let [environment (get-in (application-config) [:nomad/environment])]
     (= environment "dev")))
 
-;; (def site
-;;   (wrap-defaults handler site-defaults))
-
 (defn -main [& args]
   (let [base-handler (-> #'base-routes
                         wrap-failsafe

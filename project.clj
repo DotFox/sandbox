@@ -5,9 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :jvm-opts ["-Dfile.encoding=UTF-8"
-             "-Dsun.jnu.encoding=UTF-8"
-             "-Xms3072m"
-             "-Xmx3072m"]
+             "-Dsun.jnu.encoding=UTF-8"]
 
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :creds :gpg}}
@@ -42,11 +40,14 @@
                                          :language-in :ecmascript5
                                          :language-out :ecmascript5}}}}
 
-  :profiles {:dev {:jvm-opts ["-Dnomad.env=dev"]
+  :profiles {:dev {:jvm-opts ["-Dnomad.env=dev"
+                              "-Xmx1g"
+                              "-Xms1g"]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                    :dependencies [[org.clojure/tools.nrepl "0.2.6"]
                                   [com.cemerick/piggieback "0.1.4-SNAPSHOT"]
                                   [weasel "0.4.3-SNAPSHOT"]]
+                   ;; For initializing new DB only
                    :datomic {:config "resources/datomic/dev-transactor-template.properties"
                              :db-uri "datomic:dev://localhost:4334/my-db"}
                    :plugins [[cider/cider-nrepl "0.8.0-SNAPSHOT"]]
@@ -55,7 +56,12 @@
                                                           :pretty-print true
                                                           :optimization :none
                                                           :source-map "resources/public/js/sandbox.js.map"}}}}}
-             :prod {:jvm-opts ["-Dnomad.env=prod"]
+             :prod {:jvm-opts ["-Dnomad.env=prod"
+                               "-Xmx4g"
+                               "-Xms4g"]
+                    ;; For initializing new DB only
+                    :datomic {:config "resources/datomic/cassandra-transactor-template.properties"
+                              :db-uri "datomic:cass://localhost:4334/my-db"}
                     :cljsbuild {:builds {:main {:compiler {:optimization :advanced
                                                            :pretty-print false
                                                            :preamble ["vendor/lib/react/react.min.js"]}}}}}}
