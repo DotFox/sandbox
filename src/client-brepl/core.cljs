@@ -1,6 +1,7 @@
 (ns client-brepl.core
   (:require [weasel.repl :as ws-repl]))
 
+
 (if-not (ws-repl/alive?)
   (ws-repl/connect "ws://localhost:9001"
                    :verbose true

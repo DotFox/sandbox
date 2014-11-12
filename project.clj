@@ -27,7 +27,7 @@
                  [jarohen/nomad "0.7.0"]
                  [com.taoensso/timbre "3.3.1-1cd4b70"]
                  [enlive "1.1.5"]
-                 [com.datomic/datomic-pro "0.9.5067"]
+                 [com.datomic/datomic-pro "0.9.5067" :exclusions [joda-time]]
 
                  [org.clojure/clojurescript "0.0-2371"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
@@ -38,7 +38,11 @@
   :cljsbuild {:builds {:main {:source-paths ["src/client"]
                               :compiler {:output-to "resources/public/js/sandbox.js"
                                          :language-in :ecmascript5
-                                         :language-out :ecmascript5}}}}
+                                         :language-out :ecmascript5}}
+                       :pic {:source-paths ["src/client-pic"]
+                             :compiler {:output-to "resources/public/js/pic.js"
+                                        :language-in :ecmascript5
+                                        :language-out :ecmascript5}}}}
 
   :profiles {:dev {:jvm-opts ["-Dnomad.env=dev"
                               "-Xmx1g"
@@ -52,10 +56,14 @@
                              :db-uri "datomic:dev://localhost:4334/my-db"}
                    :plugins [[cider/cider-nrepl "0.8.0-SNAPSHOT"]]
                    :cljsbuild {:builds {:main {:source-paths ["src/client-brepl"]
-                                               :compiler {:output-dir "resources/public/js/out"
+                                               :compiler {:output-dir "resources/public/js/out-main"
                                                           :pretty-print true
                                                           :optimization :none
-                                                          :source-map "resources/public/js/sandbox.js.map"}}}}}
+                                                          :source-map "resources/public/js/sandbox.js.map"}}
+                                        :pic {:compiler {:output-dir "resources/public/js/out-pic"
+                                                         :pretty-print true
+                                                         :optimization :none
+                                                         :source-map "resources/public/js/pic.js.map"}}}}}
              :prod {:jvm-opts ["-Dnomad.env=prod"
                                "-Xmx4g"
                                "-Xms4g"]
@@ -64,7 +72,9 @@
                               :db-uri "datomic:cass://localhost:4334/my-db"}
                     :cljsbuild {:builds {:main {:compiler {:optimization :advanced
                                                            :pretty-print false
-                                                           :preamble ["vendor/lib/react/react.min.js"]}}}}}}
+                                                           :preamble ["vendor/lib/react/react.min.js"]}}
+                                         :pic {:compiler {:optimization :advanced
+                                                          :pretty-print false}}}}}}
 
   :bower-dependencies [[maxmertkit "git://github.com/maxmert/maxmertkit.git#master"]
                        [react "0.11.2"]]
@@ -88,7 +98,7 @@
             "launch-dev" ["with-profile" "dev"
                           ["pdo"
                            ["garden" "auto"]
-                           ["cljsbuild" "auto"]
+                           ["cljsbuild" "auto" "main" "pic"]
                            ["minify-assets" "watch"]
                            ["run"]
                            ["repl" ":headless"]]]
@@ -99,10 +109,25 @@
             "launch-prod" ["with-profile" "prod"
                            ["do"
                             ["garden" "once"]
-                            ["cljsbuild" "once"]
+                            ["cljsbuild" "once" "main" "pic"]
                             ["minify-assets"]
                             ["run"]]]
             "update-deps" ["with-profile" "dev"
                            ["do"
-                            ["ancient" "upgrade" ":all" ":allow-all" ":interactive" ":check-clojure" ":aggressive" ":no-tests"]]]
-            "inspect-dev" ["with-profile" "dev" "pprint"]})
+                            ["ancient"
+                             "upgrade"
+                             ":all"
+                             ":allow-all"
+                             ":interactive"
+                             ":check-clojure"
+                             ":aggressive"
+                             ":no-tests"]]]
+            "inspect-dev" ["with-profile" "dev" "pprint"]
+            "inspect-prod" ["with-profile" "prod" "pprint"]
+            "start-datomic" ["with-profile"
+                             "dev"
+                             "datomic"
+                             "start"]
+            "start-datomic-prod" ["with-profile" "prod"
+                                  ["datomic"
+                                   "start"]]})
