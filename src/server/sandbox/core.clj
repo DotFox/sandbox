@@ -14,12 +14,12 @@
 
 (defn -main [& args]
   (let [base-handler (-> #'base-routes
-                        wrap-failsafe
-                        wrap-gzip)
+                         wrap-failsafe
+                         wrap-gzip)
         handler (if in-dev?
                   (-> base-handler
-                     wrap-request-logging
-                     wrap-reload)
+                      wrap-request-logging
+                      wrap-reload)
                   base-handler)
         server-opts (get-in (application-config) [:server])]
     (println (str "Start server with " server-opts))

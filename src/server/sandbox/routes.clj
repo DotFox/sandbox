@@ -2,7 +2,8 @@
   (:use compojure.core
         [server.sandbox.templates :only [main-template]]
         [server.sandbox.config :only [application-config]])
-  (:require [compojure.route :as route]
+  (:require [clojure.java [io :as io]]
+            [compojure.route :as route]
             [compojure.response :as response]))
 
 (def root
@@ -10,14 +11,16 @@
     ""
     "public"))
 
+(defn picsel []
+  (io/file "resources/images/picsel.png"))
+
+(def memo-picsel
+  (memoize picsel))
+
 (defroutes base-routes
   (GET "/" [] (main-template))
-  (GET "/test" []
+  (GET "/images/:name.png" [name x y :as r]
        {:status 200
-        :headers {"Content-Type" "text/html; charset=utf-8"}})
-  (GET "/api" [x y :as r]
-       {:status 200
-        :headers {"Content-Type" "text/html; charset=utf-8"}
-        :body (str "OK: " r)})
+        :body (memo-picsel)})
   (route/resources "/" {:root root})
   (route/not-found "Page not found"))

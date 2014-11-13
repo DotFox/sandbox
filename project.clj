@@ -7,9 +7,6 @@
   :jvm-opts ["-Dfile.encoding=UTF-8"
              "-Dsun.jnu.encoding=UTF-8"]
 
-  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
-                                   :creds :gpg}}
-
   :plugins [[lein-garden "0.2.5"]
             [lein-asset-minifier "0.2.0"]
             [lein-bower "0.5.1"]
@@ -23,17 +20,17 @@
                  [ring/ring-core "1.3.1"]
                  [ring/ring-defaults "0.1.2"]
                  [bk/ring-gzip "0.1.1"]
-                 [http-kit "2.2.0-SNAPSHOT"]
                  [jarohen/nomad "0.7.0"]
                  [com.taoensso/timbre "3.3.1-1cd4b70"]
                  [enlive "1.1.5"]
-                 [com.datomic/datomic-pro "0.9.5067" :exclusions [joda-time]]
+
+                 [http-kit "2.2.0-SNAPSHOT"]
+
+                 [clojurewerkz/cassaforte "2.0.0-beta8"]
 
                  [org.clojure/clojurescript "0.0-2371"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [om "0.8.0-alpha1"]]
-
-  :datomic {:schemas ["resources/datomic/schema" ["my-db.edn"]]}
+                 [om "0.8.0-alpha2"]]
 
   :cljsbuild {:builds {:main {:source-paths ["src/client"]
                               :compiler {:output-to "resources/public/js/sandbox.js"
@@ -51,9 +48,6 @@
                    :dependencies [[org.clojure/tools.nrepl "0.2.6"]
                                   [com.cemerick/piggieback "0.1.4-SNAPSHOT"]
                                   [weasel "0.4.3-SNAPSHOT"]]
-                   ;; For initializing new DB only
-                   :datomic {:config "resources/datomic/dev-transactor-template.properties"
-                             :db-uri "datomic:dev://localhost:4334/my-db"}
                    :plugins [[cider/cider-nrepl "0.8.0-SNAPSHOT"]]
                    :cljsbuild {:builds {:main {:source-paths ["src/client-brepl"]
                                                :compiler {:output-dir "resources/public/js/out-main"
@@ -67,9 +61,6 @@
              :prod {:jvm-opts ["-Dnomad.env=prod"
                                "-Xmx4g"
                                "-Xms4g"]
-                    ;; For initializing new DB only
-                    :datomic {:config "resources/datomic/cassandra-transactor-template.properties"
-                              :db-uri "datomic:cass://localhost:4334/my-db"}
                     :cljsbuild {:builds {:main {:compiler {:optimization :advanced
                                                            :pretty-print false
                                                            :preamble ["vendor/lib/react/react.min.js"]}}
@@ -98,10 +89,9 @@
             "launch-dev" ["with-profile" "dev"
                           ["pdo"
                            ["garden" "auto"]
-                           ["cljsbuild" "auto" "main" "pic"]
+                           ["cljsbuild" "auto"]
                            ["minify-assets" "watch"]
-                           ["run"]
-                           ["repl" ":headless"]]]
+                           ["run"]]]
             "clean-prod" ["with-profile" "prod"
                           ["pdo"
                            ["cljsbuild" "clean"]
@@ -109,25 +99,16 @@
             "launch-prod" ["with-profile" "prod"
                            ["do"
                             ["garden" "once"]
-                            ["cljsbuild" "once" "main" "pic"]
+                            ["cljsbuild" "once"]
                             ["minify-assets"]
                             ["run"]]]
-            "update-deps" ["with-profile" "dev"
-                           ["do"
-                            ["ancient"
-                             "upgrade"
-                             ":all"
-                             ":allow-all"
-                             ":interactive"
-                             ":check-clojure"
-                             ":aggressive"
-                             ":no-tests"]]]
+            "update-deps" ["do"
+                           ["ancient"
+                            "upgrade"
+                            ":all"
+                            ":allow-all"
+                            ":interactive"
+                            ":check-clojure"
+                            ":no-tests"]]
             "inspect-dev" ["with-profile" "dev" "pprint"]
-            "inspect-prod" ["with-profile" "prod" "pprint"]
-            "start-datomic" ["with-profile"
-                             "dev"
-                             "datomic"
-                             "start"]
-            "start-datomic-prod" ["with-profile" "prod"
-                                  ["datomic"
-                                   "start"]]})
+            "inspect-prod" ["with-profile" "prod" "pprint"]})

@@ -1,9 +1,25 @@
 {:nomad/snippets
  {:databases
-  {:dev {:config "resources/datomic/dev-transactor-template.properties"
-         :db-uri "datomic:dev://localhost:4334/my-db"}
-   :prod {:config "resources/datomic/cassandra-transactor-template.properties"
-          :db-uri "datomic:cass://localhost:4334/my-db"}}}
+  {:dev {:datomic {:config "resources/datomic/dev-transactor-template.properties"
+                   :db-uri "datomic:dev://localhost:4334/my-db"}
+         :influx {:host     "localhost"
+                  :scheme   "http"
+                  :port     8086
+                  :username "root"
+                  :password "root"
+                  :db       "dev-db"}
+         :cassandra {:hosts ["127.0.0.1"]
+                     :keyspace "my-cassandra-keyspace"}}
+   :prod {:datomic {:config "resources/datomic/cassandra-transactor-template.properties"
+                    :db-uri "datomic:cass://localhost:4334/my-db"}
+          :influx {:host     "localhost"
+                   :scheme   "http"
+                   :port     8086
+                   :username "root"
+                   :password "root"
+                   :db       "prod-db"}
+          :cassandra {:hosts ["127.0.0.1"]
+                      :keyspace "my-cassandra-keyspace"}}}}
  
  :nomad/environments
  {"dev"
